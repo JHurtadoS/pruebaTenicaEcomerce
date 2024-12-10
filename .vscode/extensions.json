@@ -1,0 +1,16 @@
+{
+    "recommendations": [
+        "ms-azuretools.vscode-docker",
+        "wallabyjs.console-ninja",
+        "austenc.tailwind-docs",
+        "christian-kohler.path-intellisense",
+        "visualstudioexptteam.vscodeintellicode",
+        "mhutchie.git-graph",
+        "dbaeumer.vscode-eslint",
+        "ms-vscode.vscode-typescript-next",
+        "christian-kohler.npm-intellisense",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "meganrogge.template-string-converter"
+    ]
+}

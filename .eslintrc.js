@@ -1,18 +1,19 @@
 module.exports = {
+    env: {
+    browser: true,
+    es2021: true,
+    'vitest/globals': true, // Permite usar describe, it, expect como globales
+  },
   extends: [
-    'airbnb',
-    'airbnb-typescript',
-    'airbnb/hooks',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:jsx-a11y/recommended',
-    'plugin:react/recommended',
-    'plugin:react/jsx-runtime',
+    'next',
+    'next/core-web-vitals',
+    'airbnb-base',
     'prettier',
   ],
-  parserOptions: {
-    project: './tsconfig.json',
-  },
   rules: {
-    'react/react-in-jsx-scope': 'off', // Next.js no requiere importar React explícitamente
+    'no-console': 'warn',
+    'no-unused-vars': 'warn',
+        'import/extensions': 'off', // Ignorar extensiones explícitas
+    'import/no-unresolved': 'off', 
   },
 };

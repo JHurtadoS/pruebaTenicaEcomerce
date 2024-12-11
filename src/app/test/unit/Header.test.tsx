@@ -1,36 +1,57 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import Header from '@/app/components/Header';
-import { useAuth } from '@/app/contexts/AuthContext';
-type Mock = ReturnType<typeof vi.fn>;
+import { MockAuthProvider } from '../__mocks__/MockAuthProvider';
 
-vi.mock('@/app/contexts/AuthContext');
+const mockLogin = vi.fn();
+const mockLogout = vi.fn();
 
 describe('Header Component', () => {
-    it('muestra el botón de iniciar sesión cuando no está autenticado', () => {
-        (useAuth as Mock).mockReturnValue({
-            isAuthenticated: false,
-            user: null,
-            login: vi.fn(),
-            logout: vi.fn(),
-        });
-
-        render(<Header onCreateProduct={vi.fn()} />);
-
-        expect(screen.getByText(/Iniciar Sesión/i)).toBeInTheDocument();
-        expect(screen.queryByText(/Crear Producto/i)).not.toBeInTheDocument();
+    beforeEach(() => {
+        vi.clearAllMocks();
     });
 
-    it('muestra el botón de cerrar sesión cuando está autenticado', () => {
-        (useAuth as Mock).mockReturnValue({
-            isAuthenticated: true,
-            user: { username: 'Mock User' },
-            login: vi.fn(),
-            logout: vi.fn(),
-        });
+    it('renders the login button when not authenticated', () => {
+        render(
+            <MockAuthProvider
+                value={{
+                    isAuthenticated: false,
+                    user: null,
+                    login: mockLogin,
+                    logout: mockLogout,
+                }}
+            >
+                <Header />
+            </MockAuthProvider>
+        );
 
-        render(<Header onCreateProduct={vi.fn()} />);
+        const loginButton = screen.getByText(/Iniciar Sesión/i);
+        expect(loginButton).toBeInTheDocument();
 
-        expect(screen.getByText(/Cerrar Sesión/i)).toBeInTheDocument();
-        expect(screen.getByText(/Crear Producto/i)).toBeInTheDocument();
+        fireEvent.click(loginButton);
+        expect(mockLogin).toHaveBeenCalledTimes(1);
+    });
+
+    it('renders the logout button and user info when authenticated', () => {
+        render(
+            <MockAuthProvider
+                value={{
+                    isAuthenticated: true,
+                    user: { username: 'Mock User' },
+                    login: mockLogin,
+                    logout: mockLogout,
+                }}
+            >
+                <Header />
+            </MockAuthProvider>
+        );
+
+        const logoutButton = screen.getByText(/Cerrar Sesión/i);
+        expect(logoutButton).toBeInTheDocument();
+
+        fireEvent.click(logoutButton);
+        expect(mockLogout).toHaveBeenCalledTimes(1);
+
+        expect(screen.getByText(/Bienvenido/i)).toBeInTheDocument();
+        expect(screen.getByText(/Mock User/i)).toBeInTheDocument();
     });
 });

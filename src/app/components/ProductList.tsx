@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Button } from "@nextui-org/react";
+import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@nextui-org/react";
 import { toast } from 'react-toastify';
-import ProductCard from './ProductCard';
-import ProductForm from './ProductForm';
-import ConfirmModal from './ConfirmModal';
-import { fetchProducts } from '@/app/api';
+import useModal from './product/useModal';
+import ProductCard from './product/ProductCard';
+import ProductCreateForm from './product/ProductCreateForm';
+import ProductEditForm from './product/ProductEditForm';
+import { deleteProduct, fetchProducts } from '../services/products';
 
 interface Product {
     id: number;
@@ -18,23 +19,19 @@ interface Product {
 
 const ProductList: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
 
-    // Usamos la función fetchProducts desde el index.ts
+    const createModal = useModal();
+    const editModal = useModal();
+    const deleteModal = useModal();
+
     const loadProducts = async () => {
         try {
-            const response = await fetch('/api/products');
-            if (!response.ok) throw new Error('Failed to fetch products');
-            const data = await response.json();
-            setProducts(data);
-        } catch (error) {
-            toast.error(`Error al cargar los productos: ${error instanceof Error ? error.message : String(error)}`);
-        } finally {
-            setLoading(false);
+            const response = await fetchProducts();
+            console.log(response)
+            setProducts(response);
+        } catch {
+            toast.error('Error al cargar los productos');
         }
     };
 
@@ -44,62 +41,111 @@ const ProductList: React.FC = () => {
 
     const handleDeleteProduct = async () => {
         if (!currentProduct) return;
+
         try {
-            const response = await fetch(`/api/products/${currentProduct.id}`, {
-                method: 'DELETE',
-            });
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            await loadProducts();
-            setIsDeleteModalOpen(false);
-            toast.success("Producto eliminado correctamente");
-        } catch (error) {
-            toast.error(`Error al eliminar el producto: ${error instanceof Error ? error.message : String(error)}`);
+            //await axiosInstance.delete(`/products/${currentProduct.id}`);
+            await deleteProduct(currentProduct.id)
+            toast.success('Producto eliminado correctamente');
+            loadProducts();
+            deleteModal.onClose();
+        } catch {
+            toast.error('Error al eliminar el producto');
         }
     };
 
+    console.log(products)
+
     return (
         <div>
-            <Button onClick={() => setIsCreateModalOpen(true)} className="mb-4">Crear Producto</Button>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {products.map((prod) => (
+            <Button color="primary" onPress={createModal.onOpen} className="mb-4">
+                Crear Producto
+            </Button>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {products.map((product) => (
                     <ProductCard
-                        key={prod.id}
-                        product={prod}
-                        onEdit={(editedProduct) => {
-                            setCurrentProduct(editedProduct);
-                            setIsEditModalOpen(true);
+                        key={product.id}
+                        product={product}
+                        onEdit={() => {
+                            setCurrentProduct(product);
+                            editModal.onOpen();
                         }}
-                        onDelete={(id) => {
-                            setCurrentProduct(products.find(p => p.id === id) || null);
-                            setIsDeleteModalOpen(true);
+                        onDelete={() => {
+                            setCurrentProduct(product);
+                            deleteModal.onOpen();
                         }}
                     />
                 ))}
             </div>
-            {/* Crear y Editar Producto */}
-            <ProductForm
-                isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
-                onSubmit={({ name, price, stock }) => console.log("Crear Producto", name, price, stock)}
-                title="Crear Producto"
-            />
-            <ProductForm
-                isOpen={isEditModalOpen}
-                onClose={() => setIsEditModalOpen(false)}
-                onSubmit={(updatedProduct) => console.log("Actualizar Producto", updatedProduct)}
-                initialValues={currentProduct || undefined}
-                title="Editar Producto"
-            />
-            {/* Confirmación de Eliminación */}
-            <ConfirmModal
-                isOpen={isDeleteModalOpen}
-                onClose={() => setIsDeleteModalOpen(false)}
-                onConfirm={handleDeleteProduct}
-                title="Eliminar Producto"
-                message={`¿Estás seguro de que quieres eliminar el producto "${currentProduct?.name}"?`}
-                confirmText="Eliminar"
-                cancelText="Cancelar"
-            />
+
+            <Modal isOpen={createModal.isOpen} onOpenChange={createModal.onToggle}>
+                <ModalContent>
+                    {() => (
+                        <>
+                            <ModalHeader>
+                                <h3>Crear Producto</h3>
+                            </ModalHeader>
+                            <ModalBody>
+                                <ProductCreateForm
+                                    onSuccess={() => {
+                                        createModal.onClose();
+                                        loadProducts();
+                                    }}
+                                />
+                            </ModalBody>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+
+            {currentProduct && (
+                <Modal isOpen={editModal.isOpen} onOpenChange={editModal.onToggle}>
+                    <ModalContent>
+                        {() => (
+                            <>
+                                <ModalHeader>
+                                    <h3>Editar Producto</h3>
+                                </ModalHeader>
+                                <ModalBody>
+                                    <ProductEditForm
+                                        product={currentProduct} // Pasamos el producto completo
+                                        onSuccess={() => {
+                                            editModal.onClose();
+                                            loadProducts();
+                                        }}
+                                    />
+
+                                </ModalBody>
+                            </>
+                        )}
+                    </ModalContent>
+                </Modal>
+            )}
+
+            {currentProduct && (
+                <Modal isOpen={deleteModal.isOpen} onOpenChange={deleteModal.onToggle}>
+                    <ModalContent>
+                        {() => (
+                            <>
+                                <ModalHeader>
+                                    <h3>Eliminar Producto</h3>
+                                </ModalHeader>
+                                <ModalBody>
+                                    <p>¿Estás seguro de que quieres eliminar el producto <b>{currentProduct.name}</b>?</p>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button color="danger" onPress={handleDeleteProduct}>
+                                        Eliminar
+                                    </Button>
+                                    <Button color="primary" onPress={deleteModal.onClose}>
+                                        Cancelar
+                                    </Button>
+                                </ModalFooter>
+                            </>
+                        )}
+                    </ModalContent>
+                </Modal>
+            )}
         </div>
     );
 };

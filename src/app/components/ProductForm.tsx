@@ -9,6 +9,7 @@ interface ProductFormProps {
     title: string;
 }
 
+
 const ProductForm: React.FC<ProductFormProps> = ({ isOpen, onClose, onSubmit, initialValues, title }) => {
     const [name, setName] = React.useState(initialValues?.name || '');
     const [price, setPrice] = React.useState(initialValues?.price?.toString() || '');

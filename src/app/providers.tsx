@@ -2,8 +2,9 @@
 
 import { NextUIProvider } from '@nextui-org/react'
 import { AuthProvider } from './contexts/AuthContext'
-import { SidebarProvider, SidebarTrigger } from "@/shadCDN/components/ui/sidebar"
-import AppSidebar from '@/shadCDN/components/app-sidebar'
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { AppSidebar } from '@/shadCDN/components/app-sidebar'
+
 
 // eslint-disable-next-line no-undef
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -11,7 +12,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <NextUIProvider>
             <AuthProvider>
 
-                <SidebarProvider className='w-screen'>
+                <SidebarProvider >
                     <AppSidebar />
                     <SidebarTrigger />
                     {children}

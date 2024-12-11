@@ -1,9 +1,5 @@
-'use client';
+import { Calendar, Home, Inbox, Package, Search, Settings } from "lucide-react"
 
-import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Calendar, Home, Inbox, Settings, Package } from 'lucide-react';
 import {
     Sidebar,
     SidebarContent,
@@ -13,7 +9,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-} from "@/shadCDN/components/ui/sidebar";
+} from "@/components/ui/sidebar"
 
 const menuItems = [
     {
@@ -28,31 +24,21 @@ const menuItems = [
     },
 ];
 
-const AppSidebar: React.FC = () => {
-    const pathname = usePathname();
-
+export function AppSidebar() {
     return (
-        <Sidebar className="w-64 min-h-screen bg-gray-200">
+        <Sidebar>
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel className="text-gray-700 font-bold text-lg mb-4">
-                        Links
-                    </SidebarGroupLabel>
+                    <SidebarGroupLabel>Links</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {menuItems.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
-                                        <Link
-                                            href={item.url}
-                                            className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${pathname === item.url
-                                                ? 'bg-blue-600 text-white'
-                                                : 'hover:bg-gray-300 text-gray-700'
-                                                }`}
-                                        >
-                                            <item.icon className="h-5 w-5" />
+                                        <a href={item.url}>
+                                            <item.icon />
                                             <span>{item.title}</span>
-                                        </Link>
+                                        </a>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
@@ -61,7 +47,5 @@ const AppSidebar: React.FC = () => {
                 </SidebarGroup>
             </SidebarContent>
         </Sidebar>
-    );
-};
-
-export default AppSidebar;
+    )
+}

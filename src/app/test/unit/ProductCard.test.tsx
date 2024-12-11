@@ -1,9 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { vi } from 'vitest';
-import ProductCard from '@/app/components/ProductCard';
+import ProductCard, { Product } from '@/app/components/product/ProductCard';
 
-describe('ProductCard', () => {
-    const mockProduct = {
+describe('ProductCard Component', () => {
+    const mockProduct: Product = {
         id: 1,
         name: 'Producto de Prueba',
         price: 100.0,
@@ -12,52 +11,49 @@ describe('ProductCard', () => {
     };
 
     it('renders product details correctly', () => {
-        render(
-            <ProductCard
-                product={mockProduct}
-                onEdit={vi.fn()}
-                onDelete={vi.fn()}
-            />
-        );
+        render(<ProductCard product={mockProduct} />);
 
-        // Verifica el nombre del producto
+        // Verificar que el nombre del producto está presente
         expect(screen.getByText(mockProduct.name)).toBeInTheDocument();
 
-        // Verifica el precio y el stock con matchers más específicos
-        expect(screen.getByText(/Precio:\s*\$100\.00/i)).toBeInTheDocument();
-        expect(screen.getByText(/Stock:\s*10/i)).toBeInTheDocument();
+        // Verificar el precio utilizando un matcher más flexible
+        expect(
+            screen.getByText((content, element) =>
+                element?.textContent === `Precio: $${mockProduct.price}`
+            )
+        ).toBeInTheDocument();
+
+        // Verificar el stock
+        expect(
+            screen.getByText((content, element) =>
+                element?.textContent === `Stock: ${mockProduct.stock}`
+            )
+        ).toBeInTheDocument();
     });
 
-    it('calls onEdit when edit button is clicked', () => {
+    it('does not render action buttons when onEdit and onDelete are not provided', () => {
+        render(<ProductCard product={mockProduct} />);
+
+        expect(screen.queryByText(/Editar/i)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Eliminar/i)).not.toBeInTheDocument();
+    });
+
+    it('calls onEdit when the edit button is clicked', () => {
         const mockOnEdit = vi.fn();
+        render(<ProductCard product={mockProduct} onEdit={mockOnEdit} />);
 
-        render(
-            <ProductCard
-                product={mockProduct}
-                onEdit={mockOnEdit}
-                onDelete={vi.fn()}
-            />
-        );
-
-        const editButton = screen.getByRole('button', { name: /editar/i });
+        const editButton = screen.getByText(/Editar/i);
         fireEvent.click(editButton);
 
         expect(mockOnEdit).toHaveBeenCalledTimes(1);
         expect(mockOnEdit).toHaveBeenCalledWith(mockProduct);
     });
 
-    it('calls onDelete when delete button is clicked', () => {
+    it('calls onDelete when the delete button is clicked', () => {
         const mockOnDelete = vi.fn();
+        render(<ProductCard product={mockProduct} onDelete={mockOnDelete} />);
 
-        render(
-            <ProductCard
-                product={mockProduct}
-                onEdit={vi.fn()}
-                onDelete={mockOnDelete}
-            />
-        );
-
-        const deleteButton = screen.getByRole('button', { name: /eliminar/i });
+        const deleteButton = screen.getByText(/Eliminar/i);
         fireEvent.click(deleteButton);
 
         expect(mockOnDelete).toHaveBeenCalledTimes(1);

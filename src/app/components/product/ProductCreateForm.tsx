@@ -34,6 +34,7 @@ const CreateProductForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) =
         <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col items-center space-y-6 max-w-md bg-transparent h-full justify-center"
+            role="form"
         >
             <h1 className="text-lg font-light text-center">Crear Producto</h1>
 

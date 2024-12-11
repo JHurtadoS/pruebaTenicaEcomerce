@@ -1,9 +1,7 @@
-import { render, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
 import ProductList from '@/app/components/ProductList';
+import { MockAuthProvider } from '../__mocks__/MockAuthProvider';
 import { toast } from 'react-toastify';
-
-type Mock = ReturnType<typeof vi.fn>;
 
 vi.mock('react-toastify', () => ({
     toast: {
@@ -12,24 +10,32 @@ vi.mock('react-toastify', () => ({
     },
 }));
 
-global.fetch = vi.fn();
-
-describe('ProductList', () => {
-    afterEach(() => {
-        vi.clearAllMocks();
-    });
-
+describe('ProductList Component', () => {
     it('shows error when fetch fails', async () => {
-        // Mock de fetch que lanza un error
-        (global.fetch as Mock).mockRejectedValueOnce(new Error('Network error'));
+        // Espiar y mockear global.fetch
+        const fetchMock = vi.spyOn(global, 'fetch').mockImplementation(() =>
+            Promise.reject(new Error('Network error'))
+        );
 
-        render(<ProductList />);
+        render(
+            <MockAuthProvider
+                value={{
+                    isAuthenticated: true,
+                    user: { username: 'Mock User' },
+                    login: vi.fn(),
+                    logout: vi.fn(),
+                }}
+            >
+                <ProductList />
+            </MockAuthProvider>
+        );
 
-        // Verificar que toast.error es llamado
+        // Esperar que `toast.error` sea llamado con el mensaje correcto
         await waitFor(() => {
-            expect(toast.error).toHaveBeenCalledTimes(1);
+            expect(toast.error).toHaveBeenCalledWith('Error al cargar los productos');
         });
 
-        expect(toast.error).toHaveBeenCalledWith(expect.stringMatching(/Error al cargar los productos/i));
+        // Restaurar el mock de fetch
+        fetchMock.mockRestore();
     });
 });

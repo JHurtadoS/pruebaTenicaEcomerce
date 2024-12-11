@@ -4,12 +4,10 @@ export interface UseModalReturn {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
-    onToggle: () => void; // Corrigido para no pasar argumentos a `onOpenChange`.
+    onToggle: () => void;
 }
 
-/**
- * Hook personalizado para manejar el estado de los modales utilizando `useDisclosure` de NextUI.
- */
+
 const useModal = (): UseModalReturn => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 

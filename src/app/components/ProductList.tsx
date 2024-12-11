@@ -43,7 +43,6 @@ const ProductList: React.FC = () => {
         if (!currentProduct) return;
 
         try {
-            //await axiosInstance.delete(`/products/${currentProduct.id}`);
             await deleteProduct(currentProduct.id)
             toast.success('Producto eliminado correctamente');
             loadProducts();
@@ -108,7 +107,7 @@ const ProductList: React.FC = () => {
                                 </ModalHeader>
                                 <ModalBody>
                                     <ProductEditForm
-                                        product={currentProduct} // Pasamos el producto completo
+                                        product={currentProduct}
                                         onSuccess={() => {
                                             editModal.onClose();
                                             loadProducts();

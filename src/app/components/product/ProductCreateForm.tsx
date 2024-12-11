@@ -24,7 +24,7 @@ const CreateProductForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) =
             await createProduct(data);
             toast.success("Producto creado con éxito");
             onSuccess();
-            reset(); // Limpia el formulario
+            reset();
         } catch (error) {
             toast.error("Ocurrió un error al crear el producto");
         }

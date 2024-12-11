@@ -14,7 +14,6 @@ export async function POST(request: Request) {
   try {
     const body: Product = await request.json();
 
-    // Validación de datos básicos
     const { name, price, stock, image } = body;
 
     if (!name || !price || !stock) {
@@ -33,7 +32,7 @@ export async function POST(request: Request) {
 
     };
 
-    products.push(newProduct); // Agregar nuevo producto
+    products.push(newProduct);
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error) {
     return NextResponse.json(

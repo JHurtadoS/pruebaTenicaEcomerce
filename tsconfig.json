@@ -10,7 +10,7 @@
     "skipLibCheck": true,
     "types": [
       "vitest/globals"
-    ], // Agregar soporte para las funciones globales de Vitest
+    ],
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,

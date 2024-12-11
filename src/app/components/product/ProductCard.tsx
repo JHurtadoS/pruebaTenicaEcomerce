@@ -13,8 +13,8 @@ export interface Product {
 
 interface ProductCardProps {
     product: Product;
-    onEdit?: (product: Product) => void; // Hacemos que onEdit sea opcional
-    onDelete?: (id: number) => void;    // Hacemos que onDelete sea opcional
+    onEdit?: (product: Product) => void;
+    onDelete?: (id: number) => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onDelete }) => {

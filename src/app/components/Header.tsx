@@ -1,14 +1,10 @@
-'use client'
+'use client';
 
 import React from 'react';
-import { Button } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import { useAuth } from '../contexts/AuthContext';
 
-interface HeaderProps {
-    onCreateProduct: () => void;
-}
-
-const Header: React.FC<HeaderProps> = ({ onCreateProduct }) => {
+const Header: React.FC = () => {
     const { isAuthenticated, user, login, logout } = useAuth();
 
     const handleAuthAction = () => {
@@ -20,18 +16,20 @@ const Header: React.FC<HeaderProps> = ({ onCreateProduct }) => {
     };
 
     return (
-        <header className="bg-blue-600 text-white p-4 flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Gestión de Productos y Pedidos</h1>
+        <header className="bg-blue-600 text-white p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <h1 className="text-2xl font-bold whitespace-nowrap">
+                Gestión de Productos y Pedidos
+            </h1>
+
             <div className="flex items-center space-x-4">
                 {isAuthenticated && (
-                    <>
-                        <span className="text-sm">Bienvenido, {user?.username}</span>
-                        <Button color="secondary" className="hover:bg-blue-700 transition-colors" onClick={onCreateProduct}>Crear Producto</Button>
-                    </>
+                    <span className="text-sm whitespace-nowrap">
+                        Bienvenido, <strong>{user?.username}</strong>
+                    </span>
                 )}
                 <Button
-                    color="secondary"
-                    className="hover:bg-blue-700 transition-colors"
+                    color="primary"
+                    className="bg-white text-blue-600 hover:bg-blue-900 hover:text-white transition-colors px-4 py-2 rounded-lg font"
                     onClick={handleAuthAction}
                 >
                     {isAuthenticated ? 'Cerrar Sesión' : 'Iniciar Sesión'}
@@ -42,3 +40,4 @@ const Header: React.FC<HeaderProps> = ({ onCreateProduct }) => {
 };
 
 export default Header;
+

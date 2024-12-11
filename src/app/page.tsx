@@ -13,23 +13,17 @@ export default function Home() {
   const pathname = usePathname();
 
   return (
-    <AuthProvider>
-      <div className="flex flex-col min-h-screen">
-        {/* Header */}
-        <Header onCreateProduct={() => { }} />
-        {/* Content */}
-        <div className="flex flex-1">
-          <Sidebar />
-          <main className="flex-1 p-4">
-            <h1 className="text-2xl font-bold mb-4">
-              {pathname === '/pedidos' ? 'Pedidos' : 'Productos'}
-            </h1>
-            {pathname === '/pedidos' ? <OrdersTable /> : <ProductList />}
-          </main>
-        </div>
-        {/* Toast Notifications */}
-        <ToastContainer position="top-right" autoClose={3000} />
+    <div className="flex flex-col min-h-screen w-full">
+      <Header />
+      <div className="flex flex-1">
+        <main className="flex-1 p-4 bg-neutral-800">
+          <h1 className="text-2xl font-bold mb-4 text-white">
+            {pathname === '/pedidos' ? 'Pedidos' : 'Productos'}
+          </h1>
+          {pathname === '/pedidos' ? <OrdersTable /> : <ProductList />}
+        </main>
       </div>
-    </AuthProvider>
+      <ToastContainer position="top-right" autoClose={3000} />
+    </div>
   );
 }

@@ -6,7 +6,6 @@ import { ToastContainer } from 'react-toastify';
 import Header from './components/Header';
 import ProductList from './components/ProductList';
 import { AuthProvider } from './contexts/AuthContext';
-import Sidebar from './components/SideBar';
 import OrdersTable from './components/OrderTable';
 
 export default function Home() {

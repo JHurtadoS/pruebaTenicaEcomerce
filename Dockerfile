@@ -10,6 +10,9 @@ RUN npm install
 # Copiar todo el código fuente
 COPY . .
 
+# Ejecutar las pruebas unitarias
+RUN npm run test:unit
+
 # Construir la aplicación Next.js
 RUN npm run build
 

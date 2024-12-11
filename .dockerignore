@@ -2,4 +2,8 @@ node_modules
 npm-debug.log
 .env
 .DS_Store
-.next/cache
+dist
+build
+coverage
+.vscode
+.idea
